@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ywj.pojo.TbItem;
 import com.ywj.service.TbItemService;
 import com.ywj.utils.EasyUIDataGridResult;
+import com.ywj.utils.FjnyResult;
 
 @Controller
 @RequestMapping("/item")
@@ -23,6 +25,11 @@ public class TbItemController {
 		Integer page
 				,@RequestParam(defaultValue = "10") Integer rows){
 		return tbItemService.getTbItemList(page, rows);
+	}
+	@RequestMapping("/save")
+	@ResponseBody
+	public FjnyResult saveTbItem(TbItem tbItem){
+		return tbItemService.saveTbItem(tbItem);
 	}
 }
 
