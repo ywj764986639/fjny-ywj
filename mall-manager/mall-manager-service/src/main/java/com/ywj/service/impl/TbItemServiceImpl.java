@@ -3,28 +3,38 @@ package com.ywj.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysql.fabric.xmlrpc.base.Data;
+import com.ywj.mapper.TbItemDescMapper;
 import com.ywj.mapper.TbItemMapper;
 import com.ywj.pojo.TbItem;
+import com.ywj.pojo.TbItemDesc;
 import com.ywj.pojo.TbItemExample;
 import com.ywj.service.TbItemService;
 import com.ywj.utils.EasyUIDataGridResult;
 import com.ywj.utils.FjnyResult;
 import com.ywj.utils.IDUtils;
+
 @Service
 public class TbItemServiceImpl implements TbItemService {
-	@Autowired
+	@Resource
 	private TbItemMapper tbItemMapper;
+	@Resource
+	private TbItemDescMapper tbItemDescMapper;
+
 	@Override
 	public EasyUIDataGridResult getTbItemList(Integer page, Integer rows) {
-		//分页插件
+		// 分页插件
 		PageHelper.startPage(page, rows);
 		TbItemExample example = new TbItemExample();
-		List<TbItem> list =  tbItemMapper.selectByExample(example);
+		example.createCriteria().andStatusNotEqualTo((byte)3);
+		List<TbItem> list = tbItemMapper.selectByExample(example);
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(list.get(i).toString());
 		}
@@ -33,20 +43,74 @@ public class TbItemServiceImpl implements TbItemService {
 		EasyUIDataGridResult easyUIDataGridResult = new EasyUIDataGridResult(total, list);
 		return easyUIDataGridResult;
 	}
+
 	@Override
-	public FjnyResult saveTbItem(TbItem tbItem) {
+	public FjnyResult saveTbItem(TbItem tbItem, String desc) {
 		long genItemId = IDUtils.genItemId();
 		tbItem.setId(genItemId);
 		tbItem.setCreated(new Date());
 		tbItem.setUpdated(new Date());
-		tbItem.setStatus((byte)1);
-		tbItem.setCid(3l);
+		tbItem.setStatus((byte) 1);
 		int insertSelective = tbItemMapper.insertSelective(tbItem);
-		if(insertSelective < 0){
+		if (insertSelective < 0) {
 			return FjnyResult.build(500, "添加商品失败");
 		}
-		return FjnyResult.ok();
-		
+		// 商品描述添加
+		TbItemDesc tbItemDesc = new TbItemDesc();
+		tbItemDesc.setItemId(tbItem.getId());
+		tbItemDesc.setItemDesc(desc);
+		tbItemDesc.setCreated(new Date());
+		tbItemDesc.setUpdated(new Date());
+		tbItemDescMapper.insertSelective(tbItemDesc);
+		return FjnyResult.ok(tbItem);
+
 	}
+
+	@Override
+	public FjnyResult updateTbItem(TbItem tbItem, String desc) {
+		// 更新商品信息
+		tbItem.setUpdated(new Date());// 更新时间
+		tbItemMapper.updateByPrimaryKeySelective(tbItem);
+		// 更新商品描述信息
+		TbItemDesc record = new TbItemDesc();
+		record.setItemId(tbItem.getId());
+		record.setItemDesc(desc);
+		record.setUpdated(new Date());
+		tbItemDescMapper.updateByPrimaryKeySelective(record);
+		return FjnyResult.ok();
+	}
+
+	@Override
+	public FjnyResult deleteTbItem(List<Long> ids) {
+		try {
+			TbItem record = new TbItem();
+			record.setStatus((byte) 3);
+			TbItemExample example = new TbItemExample();
+			example.createCriteria().andIdIn(ids);
+			tbItemMapper.updateByExampleSelective(record, example);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return FjnyResult.build(500,"删除失败");
+		}
+
+		return FjnyResult.ok();
+	}
+
+	@Override
+	public FjnyResult soldTbItem(List<Long> ids) {
+		try {
+			TbItem record = new TbItem();
+			record.setStatus((byte) 2);
+			TbItemExample example = new TbItemExample();
+			example.createCriteria().andIdIn(ids);
+			tbItemMapper.updateByExampleSelective(record, example);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return FjnyResult.build(500,"下架失败");
+		}
+
+		return FjnyResult.ok();
+	}
+
 
 }

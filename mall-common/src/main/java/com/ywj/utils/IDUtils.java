@@ -2,7 +2,9 @@ package com.ywj.utils;
 
 import java.util.Random;
 
-
+/**
+ * 各种id生成策略
+ */
 public class IDUtils {
 
 	/**

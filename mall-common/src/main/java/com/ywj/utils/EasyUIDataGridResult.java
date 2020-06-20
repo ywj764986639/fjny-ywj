@@ -5,8 +5,13 @@ import java.util.List;
 public class EasyUIDataGridResult {
 	private long total;
 	private List<?> rows;
-	public EasyUIDataGridResult(){
-		
+	
+	public EasyUIDataGridResult() {
+	}
+	public EasyUIDataGridResult(long total, List<?> rows) {
+		super();
+		this.total = total;
+		this.rows = rows;
 	}
 	public long getTotal() {
 		return total;
@@ -20,11 +25,6 @@ public class EasyUIDataGridResult {
 	public void setRows(List<?> rows) {
 		this.rows = rows;
 	}
-	public EasyUIDataGridResult(long total, List<?> rows) {
-		super();
-		this.total = total;
-		this.rows = rows;
-	}
 	
-	
+
 }

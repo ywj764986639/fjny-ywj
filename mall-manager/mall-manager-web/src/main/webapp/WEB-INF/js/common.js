@@ -41,6 +41,13 @@ var TT = FJNY = {
 		}
 		return "";
 	},
+	formatImg : function(val,row){
+		console.log("============" + val + "=================");
+		if(val){
+			return "<img src='"+val+"' width='80' height='50' onclick = 'showImg(\""+val+"\")'></img>";		
+		}
+		return "";
+	},
 	// 格式化价格
 	formatPrice : function(val,row){
 		return (val/1000).toFixed(2);
@@ -51,8 +58,8 @@ var TT = FJNY = {
             return '正常';
         } else if(val == 2){
         	return '<span style="color:red;">下架</span>';
-        } else {
-        	return '未知';
+        } else if(val == 3){
+        	return '已删除';
         }
     },
     
@@ -105,6 +112,7 @@ var TT = FJNY = {
     // 初始化选择类目组件
     initItemCat : function(data){
     	$(".selectItemCat").each(function(i,e){
+    		console.log(data);
     		var _ele = $(e);
     		if(data && data.cid){
     			_ele.after("<span style='margin-left:10px;'>"+data.cid+"</span>");
@@ -126,6 +134,7 @@ var TT = FJNY = {
     			    		url:'/item/cat/list',
     			    		animate:true,
     			    		onClick : function(node){
+    		/*	    			alert(node.text); */
     			    			if($(this).tree("isLeaf",node.target)){
     			    				// 填写到cid中
     			    				_ele.parent().find("[name=cid]").val(node.id);
