@@ -1,7 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
+	
 	<div class="super-theme-example">
+	<input id="ss" class="easyui-searchbox" style="width:300px;height:40px;font-size: 22px"
+    	data-options="searcher:qq,prompt:'Please Input Value',menu:'#mm'"></input>
+	<div id="mm" style="width:120px">
+	    <div data-options="name:'all',iconCls:'icon-ok'">All News</div>
+	    <div data-options="name:'sports'">Sports News</div>
+	</div>
 		<div style="height: 550px;">
 			<table id="dg"></table>
 		</div>
@@ -74,7 +80,7 @@
 					$.messager.confirm('确认', '您确认想要删除ID为'+ids+'商品吗？', function(r) {
 						if(r) {
 							//进行post跟服务器端交互
-							var params = {"ids":ids};
+							var params = {"ids":ids,status:3};
 							$.post("/item/delete",params,function(data){
 								if(data.status == 200){
 									alert("删除成功");
@@ -90,6 +96,29 @@
 				text : '上架',
 				iconCls : 'fa fa-save',
 				handler : function() {
+					var ids = getSelections();
+					//判断如果未选定,不执行，提示
+					if(ids.length == 0){
+						$.messager.alert("提示","必须选择一个或者多个商品");
+						return;
+					}
+					
+				//提示是否上架数据
+					$.messager.confirm('确认', '您确认想要上架ID为'+ids+'商品吗？', function(r) {
+						if(r) {
+							//进行post跟服务器端交互
+							var params = {"ids":ids,status:1};
+							$.post("/item/delete",params,function(data){
+								if(data.status == 200){
+									alert("上架成功");
+									$("#dg").datagrid("reload");
+								}else{
+									alert("上架失败" + data.msg);
+								}
+							})
+						}
+					});
+				
 				}
 			}, {
 				text : '下架',
@@ -102,12 +131,12 @@
 						return;
 					}
 					
-					//提示是否下架
+				//提示是否下架数据
 					$.messager.confirm('确认', '您确认想要下架ID为'+ids+'商品吗？', function(r) {
 						if(r) {
 							//进行post跟服务器端交互
-							var soldout = {"ids":ids};
-							$.post("/item/sold",soldout,function(data){
+							var params = {"ids":ids,status:2};
+							$.post("/item/delete",params,function(data){
 								if(data.status == 200){
 									alert("下架成功");
 									$("#dg").datagrid("reload");
@@ -117,7 +146,6 @@
 							})
 						}
 					});
-				
 				}
 			} ],
 			height : 400,
@@ -200,4 +228,7 @@
 		  	ids = ids.join(",");
 		  	return ids;
 		}
+		   function qq(value,name){
+			    alert(value+":"+name)
+			    }
 	</script>

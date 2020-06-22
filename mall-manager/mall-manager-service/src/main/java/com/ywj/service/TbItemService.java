@@ -11,15 +11,15 @@ public interface TbItemService {
 	public EasyUIDataGridResult getTbItemList(Integer page, Integer rows);
 	
 	//添加商品
-	public FjnyResult saveTbItem(TbItem tbItem,String desc);
+	public FjnyResult saveTbItem(TbItem tbItem,String desc, String itemParams);
 
 	//更新商品
 	public FjnyResult updateTbItem(TbItem tbItem,String Desc);
 	
-	//删除商品
-	public FjnyResult deleteTbItem(List<Long> ids);
-	
+	//删除商品	
 	//下架商品
-	public FjnyResult soldTbItem(List<Long> ids);
+	//上架商品
+	public FjnyResult deleteTbItem(List<Long> ids,int a);
+
 
 }

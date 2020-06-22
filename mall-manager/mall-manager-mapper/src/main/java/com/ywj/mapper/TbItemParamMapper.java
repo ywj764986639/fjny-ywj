@@ -2,6 +2,8 @@ package com.ywj.mapper;
 
 import com.ywj.pojo.TbItemParam;
 import com.ywj.pojo.TbItemParamExample;
+import com.ywj.pojo.TbItemParamItem;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,4 +35,6 @@ public interface TbItemParamMapper {
     int updateByPrimaryKeyWithBLOBs(TbItemParam record);
 
     int updateByPrimaryKey(TbItemParam record);
+
+
 }

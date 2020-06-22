@@ -39,8 +39,8 @@ public class TbItemController {
 	}
 	@RequestMapping(value = "/save",method = RequestMethod.POST)
 	@ResponseBody
-	public FjnyResult saveTbItem(TbItem tbItem,String desc){
-		tbItemService.saveTbItem(tbItem, desc);
+	public FjnyResult saveTbItem(TbItem tbItem,String desc,String itemParams){
+		tbItemService.saveTbItem(tbItem, desc,itemParams);
 		return FjnyResult.ok();
 	}
 	
@@ -66,14 +66,8 @@ public class TbItemController {
 	
 	@RequestMapping("/delete")
 	@ResponseBody
-	public FjnyResult deleteTbItem(@RequestParam("ids") List<Long>ids){
-		return tbItemService.deleteTbItem(ids);
-	}
-	
-	@RequestMapping("/sold")
-	@ResponseBody
-	public FjnyResult soldTbItem(@RequestParam("ids") List<Long>ids){
-		return tbItemService.soldTbItem(ids);
+	public FjnyResult deleteTbItem(@RequestParam("ids") List<Long>ids,@RequestParam("status") int status){
+		return tbItemService.deleteTbItem(ids,status);
 	}
 	
 

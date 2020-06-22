@@ -80,6 +80,7 @@
 
 					<li data-url='item-list'>商品列表</li>
 					<li id="item-add" data-url='item-add'>增加商品</li>
+					<li id="item-param-list" data-url='item-param-list'>商品规格</li>
 				</ul>
 			</div>
 		</div>

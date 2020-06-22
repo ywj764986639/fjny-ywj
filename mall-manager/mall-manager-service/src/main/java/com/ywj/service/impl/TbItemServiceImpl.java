@@ -13,9 +13,12 @@ import com.github.pagehelper.PageInfo;
 import com.mysql.fabric.xmlrpc.base.Data;
 import com.ywj.mapper.TbItemDescMapper;
 import com.ywj.mapper.TbItemMapper;
+import com.ywj.mapper.TbItemParamItemMapper;
+import com.ywj.mapper.TbItemParamMapper;
 import com.ywj.pojo.TbItem;
 import com.ywj.pojo.TbItemDesc;
 import com.ywj.pojo.TbItemExample;
+import com.ywj.pojo.TbItemParamItem;
 import com.ywj.service.TbItemService;
 import com.ywj.utils.EasyUIDataGridResult;
 import com.ywj.utils.FjnyResult;
@@ -27,6 +30,8 @@ public class TbItemServiceImpl implements TbItemService {
 	private TbItemMapper tbItemMapper;
 	@Resource
 	private TbItemDescMapper tbItemDescMapper;
+	@Resource
+	private TbItemParamItemMapper tbItemParamItemMapper;
 
 	@Override
 	public EasyUIDataGridResult getTbItemList(Integer page, Integer rows) {
@@ -45,7 +50,7 @@ public class TbItemServiceImpl implements TbItemService {
 	}
 
 	@Override
-	public FjnyResult saveTbItem(TbItem tbItem, String desc) {
+	public FjnyResult saveTbItem(TbItem tbItem, String desc,String itemParams) {
 		long genItemId = IDUtils.genItemId();
 		tbItem.setId(genItemId);
 		tbItem.setCreated(new Date());
@@ -62,7 +67,17 @@ public class TbItemServiceImpl implements TbItemService {
 		tbItemDesc.setCreated(new Date());
 		tbItemDesc.setUpdated(new Date());
 		tbItemDescMapper.insertSelective(tbItemDesc);
-		return FjnyResult.ok(tbItem);
+		
+		//把商品的规格参数插入到tb_item_param_item中
+		TbItemParamItem itemParamItem = new TbItemParamItem();
+		itemParamItem.setItemId(tbItem.getId());
+		itemParamItem.setParamData(itemParams);
+		itemParamItem.setCreated(new Date());
+		itemParamItem.setUpdated(new Date());
+		tbItemParamItemMapper.insert(itemParamItem);
+		
+		return FjnyResult.ok();
+//		return FjnyResult.ok(tbItem);
 
 	}
 
@@ -81,36 +96,29 @@ public class TbItemServiceImpl implements TbItemService {
 	}
 
 	@Override
-	public FjnyResult deleteTbItem(List<Long> ids) {
+	public FjnyResult deleteTbItem(List<Long> ids,int a) {
 		try {
 			TbItem record = new TbItem();
-			record.setStatus((byte) 3);
-			TbItemExample example = new TbItemExample();
+			record.setStatus((byte) a);
+				TbItemExample example = new TbItemExample();
 			example.createCriteria().andIdIn(ids);
 			tbItemMapper.updateByExampleSelective(record, example);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return FjnyResult.build(500,"删除失败");
+			
+			if(a==1){
+				return FjnyResult.build(500,"上架失败");
+			}else if(a==2) {
+				return FjnyResult.build(500,"下架失败");
+			}else{
+				return FjnyResult.build(500,"删除失败");
+			}
+		
 		}
 
 		return FjnyResult.ok();
 	}
 
-	@Override
-	public FjnyResult soldTbItem(List<Long> ids) {
-		try {
-			TbItem record = new TbItem();
-			record.setStatus((byte) 2);
-			TbItemExample example = new TbItemExample();
-			example.createCriteria().andIdIn(ids);
-			tbItemMapper.updateByExampleSelective(record, example);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return FjnyResult.build(500,"下架失败");
-		}
 
-		return FjnyResult.ok();
-	}
 
 
 }

@@ -217,10 +217,10 @@ var TT = FJNY = {
 					 html+="</li></table>";
 				 }
 				 html+= "</ul>";
-				 $("#"+formId+" .params td").eq(1).html(html);
+				 $("#"+formId+" .params div").html(html);
 			  }else{
 				 $("#"+formId+" .params").hide();
-				 $("#"+formId+" .params td").eq(1).empty();
+				 $("#"+formId+" .params td").empty();
 			  }
 		  });
     },
